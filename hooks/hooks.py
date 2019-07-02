@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #
-# Copyright 2016-2018 Canonical Ltd
+# Copyright 2017 Canonical Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,22 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
-
-_path = os.path.dirname(os.path.realpath(__file__))
-_parent = os.path.abspath(os.path.join(_path, ".."))
-
-
-def _add_path(path):
-    if path not in sys.path:
-        sys.path.insert(1, path)
-
-
-_add_path(_parent)
-
 from charmhelpers.core import hookenv, host
 from charmhelpers import fetch
+import os
+import sys
 
 PACKAGES = ['lldpd']
 
@@ -57,8 +45,9 @@ def config_changed():
         args.append('-C %s ' % str(configs['systemid-from-interface']))
     if 'interfaces-regex' in configs:
         args.append('-I %s ' % str(configs['interfaces-regex']))
-    if configs['enable-snmp']:
-        args.append('-x ')
+    if 'short-name' in configs:
+       if str(configs['short-name']) == "True":
+           short_name()
     machine_id = os.environ['JUJU_MACHINE_ID']
     if machine_id:
         args.append('-S juju_machine_id=%s' % str(machine_id))
@@ -77,6 +66,13 @@ def disable_i40e_lldp():
         cmd = open('%s/%s/command' % (str(path),str(nic)), 'w')
         cmd.write('lldp stop')
         cmd.close()
+
+def short_name():
+    path = '/etc/lldpd.conf'
+    shortname = os.uname()[1]
+    cmd = open('%s' % (str(path)), 'w')
+    cmd.write('configure system hostname %s\n' % str(shortname))
+    cmd.close()
 
 if __name__ == '__main__':
     try:

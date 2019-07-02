@@ -50,8 +50,7 @@ class AmuletDeployment(object):
             this_service['units'] = 1
 
         self.d.add(this_service['name'], units=this_service['units'],
-                   constraints=this_service.get('constraints'),
-                   storage=this_service.get('storage'))
+                   constraints=this_service.get('constraints'))
 
         for svc in other_services:
             if 'location' in svc:
@@ -65,8 +64,7 @@ class AmuletDeployment(object):
                 svc['units'] = 1
 
             self.d.add(svc['name'], charm=branch_location, units=svc['units'],
-                       constraints=svc.get('constraints'),
-                       storage=svc.get('storage'))
+                       constraints=svc.get('constraints'))
 
     def _add_relations(self, relations):
         """Add all of the relations for the services."""
