@@ -13,6 +13,7 @@
   EDP protocol. It also handles LLDP-MED extension.
 "series":
 - "xenial"
+- "bionic"
 "tags":
 - "network"
 - "ops"
